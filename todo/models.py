@@ -30,4 +30,7 @@ class Todo(CommonModel):
         if self.deadline == None:
             return None
         else:
-            return self.deadline - timezone.now()
+            if self.deadline < timezone.now():
+                return "기간 만료"
+            else:
+                return self.deadline - timezone.now()
