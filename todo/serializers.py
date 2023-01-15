@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import serializers
 from .models import Todo
 from users.serializers import TinyUserSerializer
@@ -13,6 +14,7 @@ class TodoSerializer(serializers.ModelSerializer):
             "pk",
             "title",
             "done",
+            "deadline",
             "is_owner",
         )
 
@@ -38,3 +40,10 @@ class TodoDetailSerailzer(serializers.ModelSerializer):
     def get_is_owner(self, todo):
         request = self.context["request"]
         return todo.user == request.user
+
+    def validate_deadline(self, value):
+        now = timezone.localtime(timezone.now())
+        if now >= value:
+            raise serializers.ValidationError("deadline must be future")
+        else:
+            return value

@@ -70,7 +70,12 @@ class Todoitem(APIView):
         )
         if serializer.is_valid():
             updated_todo = serializer.save()
-            return Response(TodoDetailSerailzer(updated_todo).data)
+            return Response(
+                TodoDetailSerailzer(
+                    updated_todo,
+                    context={"request": request},
+                ).data
+            )
         else:
             return Response(serializer.errors)
 
