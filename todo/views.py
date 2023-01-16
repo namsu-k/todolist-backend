@@ -1,16 +1,16 @@
 from django.db import transaction
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.exceptions import NotFound, NotAuthenticated, PermissionDenied
-from rest_framework.status import HTTP_204_NO_CONTENT
+from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST
 from .models import Todo
 from .serializers import TodoSerializer, TodoDetailSerailzer
 
 
 class Todolist(APIView):
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request):
         all_todo = Todo.objects.all()
@@ -37,7 +37,7 @@ class Todolist(APIView):
                 )
                 return Response(serializer.data)
         else:
-            return Response(serializer.errors)
+            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 
 class Todoitem(APIView):
